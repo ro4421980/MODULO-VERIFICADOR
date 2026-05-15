@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificador ULEAM</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <h1>Verificador de Elegibilidad</h1>
+        <p>Descubre a qué becas puedes postular en menos de 1 minuto.</p>
+    </header>
+
+    <main class="verificador-uleam">
+        <input type="radio" name="view" id="view-form" checked hidden>
+        <input type="radio" name="view" id="view-results" hidden>
+        
+        <input type="radio" name="beca-filter" id="filter-all" checked hidden>
+        <input type="radio" name="beca-filter" id="filter-excelencia" hidden>
+        <input type="radio" name="beca-filter" id="filter-ayuda" hidden>
+
+        <div class="card-container">
+            <section class="view-section form-view">
+                <h2>Verificador ULEAM</h2>
+                <div class="input-group">
+                    <label>Selecciona tu perfil para filtrar:</label>
+                    <div class="filter-options">
+                        <label for="filter-excelencia" class="chip">Alto Rendimiento</label>
+                        <label for="filter-ayuda" class="chip">Apoyo Económico / Movilidad</label>
+                        <label for="filter-all" class="chip">Ver Todas</label>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="promedio-input">Promedio del semestre:</label>
+                    <input type="number" id="promedio-input" step="0.1" placeholder="Ej: 9.5">
+                </div>
+
+                <label for="view-results" class="btn-main">Verificar Elegibilidad</label>
+            </section>
+
+            <section class="view-section results-view">
+                <h2>Becas Disponibles</h2>
+                <p>Según tu filtro seleccionado:</p>
+                <p id="result-message" class="result-message"></p>
+
+                <div class="becas-list">
+                    <article class="beca-item cat-excelencia">
+                        <span>Beca de Alto Rendimiento</span>
+                        <a href="#" class="btn-postular">Postular ahora</a>
+                    </article>
+
+                    <article class="beca-item cat-excelencia">
+                        <span>Beca de Investigación</span>
+                        <a href="#" class="btn-postular">Postular ahora</a>
+                    </article>
+
+                    <article class="beca-item cat-ayuda">
+                        <span>Ayuda para Movilidad</span>
+                        <a href="#" class="btn-postular">Postular ahora</a>
+                    </article>
+
+                    <article class="beca-item cat-ayuda">
+                        <span>Acciones Afirmativas</span>
+                        <a href="#" class="btn-postular">Postular ahora</a>
+                    </article>
+                </div>
+
+                <label for="view-form" class="btn-back">← Volver a filtrar</label>
+            </section>
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const promedioInput = document.getElementById('promedio-input');
+            const viewResultsInput = document.getElementById('view-results');
+            const resultMessage = document.getElementById('result-message');
+            const btnVerify = document.querySelector('.btn-main');
+            const backToFilter = document.querySelector('.btn-back');
+            const postularLinks = document.querySelectorAll('.btn-postular');
+            const filterRadios = document.querySelectorAll('input[name="beca-filter"]');
+
+            const thresholds = {
+                'Beca de Alto Rendimiento': 9.0,
+                'Beca de Investigación': 8.5,
+                'Ayuda para Movilidad': 7.0,
+                'Acciones Afirmativas': 6.5
+            };
+
+            function getSelectedFilter() {
+                return document.querySelector('input[name="beca-filter"]:checked').id;
+            }
+
+            function updateResultMessage(promedio) {
+                const filter = getSelectedFilter();
+                let message = 'Aquí están las becas disponibles según tu perfil.';
+
+                if (filter === 'filter-excelencia' && promedio < 8.5) {
+                    message = 'Tu promedio es bajo para las becas de Alto Rendimiento. Ajusta el filtro o mejora tu promedio.';
+                }
+                if (filter === 'filter-ayuda' && promedio < 6.5) {
+                    message = 'Tu promedio es bajo para Ayuda Económica o Movilidad. Aún así puedes revisar otras opciones.';
+                }
+
+                resultMessage.textContent = message;
+            }
+
+            function applyScholarshipEligibility(promedio) {
+                document.querySelectorAll('.beca-item').forEach(function (item) {
+                    const label = item.querySelector('span').textContent.trim();
+                    const min = thresholds[label] || 0;
+                    if (promedio >= min) {
+                        item.style.opacity = '1';
+                        item.style.pointerEvents = 'auto';
+                    } else {
+                        item.style.opacity = '0.5';
+                        item.style.pointerEvents = 'none';
+                    }
+                });
+            }
+
+            btnVerify.addEventListener('click', function () {
+                const promedio = parseFloat(promedioInput.value);
+                if (Number.isNaN(promedio) || promedio < 0 || promedio > 10) {
+                    alert('Por favor ingresa un promedio válido entre 0.0 y 10.0.');
+                    promedioInput.focus();
+                    return;
+                }
+
+                updateResultMessage(promedio);
+                applyScholarshipEligibility(promedio);
+                viewResultsInput.checked = true;
+            });
+
+            backToFilter.addEventListener('click', function () {
+                resultMessage.textContent = '';
+                document.querySelectorAll('.beca-item').forEach(function (item) {
+                    item.style.opacity = '1';
+                    item.style.pointerEvents = 'auto';
+                });
+            });
+
+            filterRadios.forEach(function (radio) {
+                radio.addEventListener('change', function () {
+                    const promedio = parseFloat(promedioInput.value);
+                    if (!Number.isNaN(promedio)) {
+                        updateResultMessage(promedio);
+                        applyScholarshipEligibility(promedio);
+                    }
+                });
+            });
+
+            postularLinks.forEach(function (link) {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const becaName = this.closest('.beca-item').querySelector('span').textContent;
+                    alert('Redirigiendo a la postulación de: ' + becaName);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

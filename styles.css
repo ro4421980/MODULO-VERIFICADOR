@@ -1,0 +1,119 @@
+/* Configuración General */
+:root {
+    --uleam-blue: #004a99;
+    --bg-light: #f4f7f6;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: var(--bg-light);
+    margin: 0;
+    padding: 20px;
+}
+
+.main-header { text-align: center; margin-bottom: 30px; }
+
+/* Contenedor Principal */
+.card-container {
+    background: white;
+    max-width: 450px;
+    margin: 0 auto;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* --- LÓGICA DE VISTAS (Intercambio de pantallas) --- */
+.view-section { display: none; } /* Ocultar ambas por defecto */
+
+/* Si el radio 'view-form' está activo, muestra el formulario */
+#view-form:checked ~ .card-container .form-view { display: block; }
+
+/* Si el radio 'view-results' está activo, muestra los resultados */
+#view-results:checked ~ .card-container .results-view { display: block; }
+
+
+/* --- LÓGICA DE FILTROS DE BECAS --- */
+.beca-item { display: none; } /* Esconder todas las becas inicialmente */
+
+/* Si 'filter-all' está marcado, mostrar todas */
+#filter-all:checked ~ .card-container .beca-item { 
+    display: flex; 
+}
+
+/* Si 'filter-excelencia' está marcado, mostrar solo clase cat-excelencia */
+#filter-excelencia:checked ~ .card-container .cat-excelencia { 
+    display: flex; 
+}
+
+/* Si 'filter-ayuda' está marcado, mostrar solo clase cat-ayuda */
+#filter-ayuda:checked ~ .card-container .cat-ayuda { 
+    display: flex; 
+}
+
+
+/* --- DISEÑO DE LOS COMPONENTES --- */
+.input-group { margin-bottom: 20px; }
+
+.filter-options { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+
+.chip {
+    padding: 8px 15px;
+    background: #eee;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Resaltar el chip seleccionado usando los radios */
+#filter-all:checked ~ .card-container label[for="filter-all"],
+#filter-excelencia:checked ~ .card-container label[for="filter-excelencia"],
+#filter-ayuda:checked ~ .card-container label[for="filter-ayuda"] {
+    background: var(--uleam-blue);
+    color: white;
+}
+
+.btn-main {
+    display: block;
+    background: black;
+    color: white;
+    text-align: center;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.beca-item {
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-postular {
+    text-decoration: none;
+    color: var(--uleam-blue);
+    border: 1px solid var(--uleam-blue);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    transition: 0.3s;
+}
+
+.btn-postular:hover {
+    background: var(--uleam-blue);
+    color: white;
+}
+
+.btn-back {
+    display: block;
+    margin-top: 20px;
+    text-align: center;
+    color: #666;
+    cursor: pointer;
+    font-size: 14px;
+}
